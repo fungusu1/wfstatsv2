@@ -1,0 +1,10 @@
+APScheduler==3.11.2
+certifi==2026.4.22
+charset-normalizer==3.4.7
+click==8.3.3
+h11==0.16.0
+idna==3.13
+requests==2.33.1
+tzlocal==5.3.1
+urllib3==2.6.3
+uvicorn==0.46.0
