@@ -5,9 +5,7 @@ DB_PATH = "warframe.db"
 SCHEMA = """
 PRAGMA foreign_keys = ON;
 
--- =========================
--- Core items
--- =========================
+-- Primary items table
 
 CREATE TABLE items (
     id INTEGER PRIMARY KEY,
@@ -15,49 +13,42 @@ CREATE TABLE items (
     unique_name TEXT NOT NULL UNIQUE,
     name TEXT NOT NULL,
 
-    type TEXT,              -- e.g. "Warframe Mod"
-    compat_class TEXT,      -- e.g. "Trinity", "Shotgun"
+    item_type TEXT NOT NULL, -- prime part, mod, relic, etc
+    compat_class TEXT,      -- 
 
-    category TEXT,          -- e.g. "Mods"
     rarity TEXT,
 
     is_augment INTEGER,     -- 0/1
-    tradable INTEGER,       -- 0/1
     is_prime INTEGER,       -- 0/1
-    transmutable INTEGER,   -- 0/1
-    masterable INTEGER,     -- 0/1
 
-    ducats INTEGER,         -- intrinsic sell value (if present)
+    ducats INTEGER,         -- ducat value
 
-    release_date TEXT,
-
-    wiki_available INTEGER,
     wiki_url TEXT,
-    image_name TEXT
+    image_url TEXT
 );
 
--- =========================
+
 -- Drop sources
--- =========================
 
 CREATE TABLE drop_sources (
     id INTEGER PRIMARY KEY,
-    name TEXT NOT NULL UNIQUE
+    name TEXT NOT NULL UNIQUE,
+    type TEXT NOT NULL  -- vendor, syndicate, enemy, mission, etc
 );
 
--- =========================
--- Item drops (junction)
--- =========================
 
-CREATE TABLE item_drops (
+-- Direct drops
+
+CREATE TABLE relic_drops (
     id INTEGER PRIMARY KEY,
 
     item_id INTEGER NOT NULL,
     source_id INTEGER NOT NULL,
 
-    drop_type TEXT,     -- raw from JSON
     chance REAL,
     rarity TEXT,
+    drop_type TEXT,
+    pool_index INTEGER,
 
     FOREIGN KEY (item_id) REFERENCES items(id),
     FOREIGN KEY (source_id) REFERENCES drop_sources(id),
@@ -65,9 +56,25 @@ CREATE TABLE item_drops (
     UNIQUE (item_id, source_id, drop_type)
 );
 
--- =========================
+
+-- Relics
+
+CREATE TABLE relic_rewards (
+    id INTEGER PRIMARY KEY,
+
+    relic_id INTEGER NOT NULL,
+    reward_item_id INTEGER NOT NULL,
+
+    rarity TEXT NOT NULL,
+    
+    FOREIGN KEY (relic_id) REFERENCES items(id),
+    FOREIGN KEY (reward_item_id) REFERENCES items(id),
+
+    UNIQUE (relic_id, reward_item_id)
+);
+
+
 -- Trade price snapshot
--- =========================
 
 CREATE TABLE item_trade_prices (
     item_id INTEGER PRIMARY KEY,
