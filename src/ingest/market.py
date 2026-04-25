@@ -40,12 +40,6 @@ def extract_stats (stats: dict):
     recent = days[-10:]
     return [(entry["volume"], entry["avg_price"]) for entry in recent]
 
-# def db_upsert():
-#     pass
-
-# def open_db():
-    # pass
-
 def calc_stats (orders: list[tuple]) -> dict:
     if not orders:
         return {}
@@ -67,12 +61,20 @@ def calc_listings (listings: list[int]) -> dict:
     output["sell_orders_avg"] = sum(listings) / len(listings)
     return output
 
+# def open_db():
+    # pass
+
+# def db_upsert():
+#     pass
+
 def driver(unformat_name: str):
+    # use unformat name as dict key or find from unformat name
+    # slugify, calc, upsert to database
     pass
 
 if __name__ == "__main__":
     formatted = slugify(testslug1)
-    
+
     orders = get_orders(formatted)
     stats = get_stats(formatted)
 
